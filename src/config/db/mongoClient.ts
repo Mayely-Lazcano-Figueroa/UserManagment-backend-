@@ -1,4 +1,6 @@
 import { MongoClient, Db } from 'mongodb';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const uri = process.env.MONGO_URI;
 if (!uri) {
@@ -17,6 +19,8 @@ export async function connectDB(): Promise<Db> {
       console.error('Failed to connect to the database', error);
       throw error;
     }
+  } else {
+    console.log('Using existing MongoDB connection');
   }
   return db;
 }
@@ -28,4 +32,6 @@ export async function closeDB(): Promise<void> {
   } catch (error) {
     console.error('Error closing MongoDB connection:', error);
   }
+
+  
 }
