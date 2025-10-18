@@ -11,7 +11,7 @@ function getEnvVar(name: string): string {
   return value;
 }
 
-const uri = getEnvVar("MONGO_URI");
+const uri = getEnvVar("MONGODB_URI");
 const dbName = getEnvVar("DB_NAME");
 
 let client: MongoClient | null = null;

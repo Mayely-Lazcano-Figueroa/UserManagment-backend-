@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-dotenv.config({ path: ".env.local" }); // <--- se ejecuta primero
+dotenv.config({ path: ".env" }); // <--- se ejecuta primero
 
 import { MongoClient } from "mongodb";
 

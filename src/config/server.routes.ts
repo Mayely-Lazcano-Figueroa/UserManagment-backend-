@@ -2,13 +2,14 @@ import { Router } from 'express';
 import HealthRoutes from '../modules/health/health.routes';
 
 import AuthRoutes from '../modules/auth/auth.routes';
-
+import GoogleRoutes from "../modules/controlC/google/routes";
 
 const router = Router();
 
 // Todas las rutas de health bajo /api
 router.use('/api', HealthRoutes);
 router.use('/api/auth', AuthRoutes);
+router.use("/api/google", GoogleRoutes);
 
 
 // Manejo de rutas no encontradas
