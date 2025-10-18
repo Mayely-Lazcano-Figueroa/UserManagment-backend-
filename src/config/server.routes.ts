@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import HealthRoutes from '../modules/health/health.routes';
 /////////////////////////////
-import requesterRoutes from '../modules/health/health.routes'; // o la ruta que corresponda
+import requesterRoutes from '../modules/requester/editRequester'; // o la ruta que corresponda
 /////////////////////////////
 const router = Router();
 
