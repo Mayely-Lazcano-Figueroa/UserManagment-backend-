@@ -3,12 +3,16 @@ import HealthRoutes from '../modules/health/health.routes';
 
 import AuthRoutes from '../modules/auth/auth.routes';
 
+import twoFactorRoutes from "../modules/auth/twoFactor/twoFactor.routes";
+
 
 const router = Router();
 
 // Todas las rutas de health bajo /api
 router.use('/api', HealthRoutes);
 router.use('/api/auth', AuthRoutes);
+
+router.use("/api/twofactor", twoFactorRoutes);
 
 
 // Manejo de rutas no encontradas
