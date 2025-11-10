@@ -1,24 +1,15 @@
-// src/modules/controlC/HU6/device.utils.ts
-//Cuando el usuario hace login, vamos a detectar el dispositivo y browser usando ua-parser-js:
 import UAParser from 'ua-parser-js';
+import crypto from 'crypto';
 
-export const parseDevice = (userAgent: string) => {
-  // CORRECCIÓN: Usar 'new' para instanciar el parser.
+export function generateDeviceId() {
+  return crypto.randomBytes(16).toString('hex');
+}
+
+export function getDeviceType(userAgent: string) {
   const parser = new UAParser(userAgent);
-
-  const os = parser.getOS();
-  const browser = parser.getBrowser();
   const device = parser.getDevice();
-
-  let type: 'desktop' | 'tablet' | 'mobile' = 'desktop';
-
-  if (device.type === 'mobile') type = 'mobile';
-  else if (device.type === 'tablet') type = 'tablet';
-
-  return {
-    type,
-    os: os.name || 'Desconocido',
-    browser: browser.name || 'Desconocido',
-    deviceName: device.model || os.name || 'Dispositivo',
-  };
-};
+  if (device.type === 'mobile') return 'Mobile';
+  if (device.type === 'tablet') return 'Tablet';
+  if (device.type === 'desktop' || !device.type) return 'Desktop';
+  return 'Other';
+}
