@@ -14,6 +14,9 @@ import cambiarContrasenaRouter from './modules/controlC/HU8/editarContraseña/ro
 ///////////////////
 import obtenerContrasenaRouter from './modules/controlC/HU8/obtener/routes';
 /////////////////////////
+import twoFaRouter from './modules/controlC/security/2fa/routes';
+/////////////////////////
+
 const app = express();
 
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));
@@ -30,6 +33,8 @@ app.use('/api/controlC/cambiar-contrasena', cambiarContrasenaRouter);
 
 ////////////////////
 app.use('/api/controlC/obtener-password', obtenerContrasenaRouter);
-////////////////////
+//////////////////////
+app.use('/api/controlC/2fa', twoFaRouter);
+
 
 app.listen(8000, () => console.log('Servidor corriendo en puerto 8000'));
