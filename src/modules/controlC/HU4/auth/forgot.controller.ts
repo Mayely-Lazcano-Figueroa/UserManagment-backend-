@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 
 const JWT_SECRET = process.env.JWT_SECRET || "super_secret_key";
-const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
+const FRONTEND_URL = process.env.FRONTEND_URL;
 const FROM_EMAIL = process.env.FROM_EMAIL || "no-reply@servineo.example";
 
 // Paleta Servineo
@@ -250,7 +250,7 @@ export async function forgotPassword(req: Request, res: Response) {
     await magicCol.insertOne({ token, email, createdAt: now, expiresAt, used: false });
 
     // Armar correo
-    const magicLink = `${FRONTEND_URL}/controlC/HU9/verify?token=${encodeURIComponent(token)}`;
+    const magicLink = `${FRONTEND_URL}/login/forgotpass/verify?token=${encodeURIComponent(token)}`;
     const displayName =
       (user as any).name && typeof (user as any).name === "string" ? (user as any).name : "usuario";
 
