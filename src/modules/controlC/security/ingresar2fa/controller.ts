@@ -3,35 +3,25 @@ import { Request, Response } from 'express';
 import { verifyTOTPForEmail } from './service';
 
 export async function verifyTOTPController(req: Request, res: Response) {
-  console.log("[DEBUG] verifyTOTPController iniciado, body:", req.body);
+  const { email, code } = req.body;
+
+  if (!email || !code) {
+    return res.status(400).json({ status: "error", message: "Email o código no proporcionado" });
+  }
 
   try {
-    const { email, code } = req.body;
-    console.log("[DEBUG] Email y código recibidos:", email, code);
-
     const result = await verifyTOTPForEmail(email, code);
-    console.log("[DEBUG] Resultado verifyTOTPForEmail:", result);
 
-    if (!result.ok) {
-      return res.status(400).json({
-        success: false,
-        message: result.message,
-        reason: result.reason
-      });
-    }
+    // ✅ En caso de éxito, devuelve mismo formato que login con Google
+    return res.json(result);
 
-    return res.json({
-      success: true,
-      data: {
-        token: result.token,
-        user: result.user,
-        failedAttempts: result.failedAttempts ?? 0,
-        twoFactorConfigured: true,
-        twoFactorConfiguredAt: result.twoFactorConfiguredAt
-      }
+  } catch (err: any) {
+    console.error("[DEBUG] Error en verifyTOTPController:", err.message || err);
+
+    // Devuelve mismo formato de error que Google Login
+    return res.status(400).json({
+      status: "error",
+      message: err.message || "Error al verificar código TOTP"
     });
-  } catch (err) {
-    console.error("[DEBUG] Error en verifyTOTPController:", err);
-    return res.status(500).json({ success: false, message: 'Error en servidor' });
   }
 }

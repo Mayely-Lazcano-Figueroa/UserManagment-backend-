@@ -4,7 +4,6 @@ import { authenticator } from 'otplib';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import clientPromise from '../../config/mongodb';
-import { ObjectId } from 'mongodb';
 
 const JWT_SECRET = process.env.JWT_SECRET || "servineo_super_secret_key";
 const TOKEN_EXPIRES = "2h";
@@ -37,12 +36,12 @@ export async function verifyTOTPForEmail(email: string, token: string) {
 
     if (!user) {
       console.log("[DEBUG] Usuario no encontrado");
-      return { ok: false, message: "Usuario no encontrado", reason: "not_found" };
+      throw new Error("Usuario no encontrado");
     }
 
     if (!user.twoFactorEnabled || !user.twoFactorSecret) {
       console.log("[DEBUG] Usuario no tiene 2FA activo");
-      return { ok: false, message: "El usuario no tiene 2FA activo", reason: "no_2fa" };
+      throw new Error("El usuario no tiene 2FA activo");
     }
 
     let secretPlain;
@@ -51,7 +50,7 @@ export async function verifyTOTPForEmail(email: string, token: string) {
       console.log("[DEBUG] Secret desencriptado:", secretPlain);
     } catch (err) {
       console.error("[DEBUG] Error desencriptando secret:", err);
-      return { ok: false, message: "Error al desencriptar el secreto 2FA", reason: "decrypt_fail" };
+      throw new Error("Error al desencriptar el secreto 2FA");
     }
 
     const isValid = authenticator.check(token, secretPlain);
@@ -60,7 +59,7 @@ export async function verifyTOTPForEmail(email: string, token: string) {
     if (!isValid) {
       await db.collection("users").updateOne({ _id: user._id }, { $inc: { failedAttempts: 1 } });
       console.log("[DEBUG] Código incorrecto, incrementando failedAttempts");
-      return { ok: false, message: "Código incorrecto", reason: "invalid_code" };
+      throw new Error("Código incorrecto");
     }
 
     const now = new Date();
@@ -74,19 +73,22 @@ export async function verifyTOTPForEmail(email: string, token: string) {
     );
     console.log("[DEBUG] JWT generado:", jwtToken);
 
+    // ✅ Devuelve mismo formato que login con Google
     return {
-      ok: true,
-      token: jwtToken,
-      user: { _id: user._id.toString(), email: user.email, name: user.name, picture: user.picture ?? null },
-      failedAttempts: 0,
-      twoFactorConfigured: true,
-      twoFactorConfiguredAt: now.toISOString()
+      status: "exists",
+      firstTime: false,
+      user: {
+        _id: user._id.toString(),
+        email: user.email,
+        name: user.name,
+        picture: user.picture ?? ""
+      },
+      token: jwtToken
     };
 
-  } catch (err) {
-    console.error("❌ Error en verifyTOTPForEmail:", err);
-    return { ok: false, message: "Error interno del servidor", reason: "server_error" };
+  } catch (err: any) {
+    console.error("❌ Error en verifyTOTPForEmail:", err.message || err);
+    // Aquí lanzamos el error para que el controller lo maneje y devuelva status 400 o 500
+    throw err;
   }
 }
-
-
