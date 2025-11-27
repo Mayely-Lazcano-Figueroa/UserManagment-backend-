@@ -1,45 +1,55 @@
-
-import { Request, Response } from "express";
-import { Device } from "../../../models/divice.model";
-
-export const registerDevice = async (req: Request, res: Response) => {
+import { Request, Response } from 'express';
+//./device.model
+import Device from '../../../models/usermanagement/device.model';
+ 
+// Registrar un dispositivo
+export const registrarDispositivo = async (req: Request, res: Response) => {
   try {
-    const { userId, os } = req.body;
+    const { userId, os, type } = req.body;
 
-    if (!userId || !os) {
-      return res.status(400).json({ message: "Faltan datos del dispositivo." });
+    if (!userId || !os || !type) {
+      return res.status(400).json({ message: 'Faltan datos requeridos' });
     }
 
-    const devices = await Device.find({ userId });
+    // Si el usuario ya tiene este tipo de dispositivo, actualizar lastLogin
+    let dispositivo = await Device.findOne({ userId, os, type });
 
-    // Limitar a 3 dispositivos
-    if (devices.length >= 3) {
-      return res.status(403).json({ message: "Máximo de 3 dispositivos alcanzado." });
+    if (dispositivo) {
+      dispositivo.lastLogin = new Date();
+      await dispositivo.save();
+      return res.json({ message: 'Dispositivo actualizado', dispositivo });
     }
 
-    // Buscar si ya existe un registro con el mismo OS
-    const existingDevice = devices.find((d) => d.os === os);
-
-    if (existingDevice) {
-      existingDevice.lastLogin = new Date();
-      await existingDevice.save();
-      return res.json({ message: "Dispositivo actualizado." });
-    }
-
-    await Device.create({ userId, os, lastLogin: new Date() });
-    res.json({ message: "Dispositivo registrado exitosamente." });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error interno al registrar dispositivo." });
+    // Si no existe, crear nuevo
+    dispositivo = new Device({ userId, os, type });
+    await dispositivo.save();
+    res.json({ message: 'Dispositivo registrado', dispositivo });
+  } catch (err) {
+    console.error('Error registrarDispositivo:', err);
+    res.status(500).json({ message: 'Error interno del servidor' });
   }
 };
 
-export const getDevices = async (req: Request, res: Response) => {
+// Obtener dispositivos de un usuario
+export const obtenerDispositivos = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    const devices = await Device.find({ userId });
-    res.json(devices);
-  } catch (error) {
-    res.status(500).json({ message: "Error al obtener dispositivos." });
+    const dispositivos = await Device.find({ userId });
+    res.json(dispositivos);
+  } catch (err) {
+    console.error('Error obtenerDispositivos:', err);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
+};
+
+// Eliminar dispositivo
+export const eliminarDispositivo = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    await Device.findByIdAndDelete(id);
+    res.json({ message: 'Dispositivo eliminado' });
+  } catch (err) {
+    console.error('Error eliminarDispositivo:', err);
+    res.status(500).json({ message: 'Error interno del servidor' });
   }
 };

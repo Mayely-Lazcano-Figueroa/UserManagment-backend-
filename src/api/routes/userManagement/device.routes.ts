@@ -1,10 +1,15 @@
-
-import { Router } from "express";
-import { registerDevice, getDevices } from "../../controllers/userManagement/device.controller";
+import { Router } from 'express';
+import {
+  registrarDispositivo,
+  obtenerDispositivos,
+  eliminarDispositivo,
+  ///device.controller
+} from '../../controllers/userManagement/device.controller';
 
 const router = Router();
 
-router.post("/register", registerDevice);
-router.get("/:userId", getDevices);
+router.post('/register', registrarDispositivo);
+router.get('/:userId', obtenerDispositivos);
+router.delete('/:id', eliminarDispositivo);
 
 export default router;

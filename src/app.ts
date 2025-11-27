@@ -1,8 +1,15 @@
-import dotenv from 'dotenv';
-dotenv.config({ path: '.env' });
-
+import mongoose from 'mongoose';
 import express from 'express';
 import cors from 'cors';
+import dotenv from 'dotenv';
+
+// --- Configuración de la Base de Datos y el Puerto ---
+dotenv.config({ path: '.env' });
+
+// --- Configuración de la Base de Datos y el Puerto ---
+const DB_URI = process.env.MONGODB_URI;
+const PORT = process.env.PORT || 8000;
+// --- Importación de Rutas ---
 import HealthRoutes from './api/routes/health.routes';
 import jobOfertRoutes from './api/routes/jobOfert.routes';
 import newoffersRoutes from './api/routes/newOffers.routes';
@@ -18,7 +25,7 @@ import ubicacionRouter from "../src/api/routes/userManagement/ubicacion.routes";
 import authRouter from "../src/api/routes/userManagement/login.routes"; 
 import modificarDatosRouter from '../src/api/routes/userManagement/modificarDatos.routes';
 import nominatimRouter from '../src/api/routes/userManagement/sugerencias.routes'; 
-import deviceRouter from '../src/api/routes/userManagement/device.routes';
+import deviceRouter from '../src/api/routes/userManagement/device.routes';//<-----
 import cambiarContrasenaRouter from '../src/api/routes/userManagement/editarContraseña.routes';
 import cerrarSesionesRouter from '../src/api/routes/userManagement/cerrarSesiones.routes';
 import ultimoCambioRouter from '../src/api/routes/userManagement/ultimoCambio.routes';
@@ -45,7 +52,7 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
+// --- Configuración de Rutas ---
 app.use('/api', HealthRoutes);
 app.use('/api/devmaster', jobOfertRoutes);
 app.use('/api/newOffers', newoffersRoutes);
@@ -68,9 +75,7 @@ app.use('/api/controlC/obtener-password', obtenerContrasenaRouter);
 app.use('/auth', githubAuthRouter);
 app.use('/auth', discordRoutes);
 app.use('/api/controlC/cliente', clienteRouter);
-export const registerRoutes = (app: any) => {
-  app.use('/devices', deviceRouter);
-};
+
 
 app.use((req, res) => {
   console.log('Not found:', req.method, req.originalUrl);
