@@ -25,7 +25,7 @@ import ubicacionRouter from "../src/api/routes/userManagement/ubicacion.routes";
 import authRouter from "../src/api/routes/userManagement/login.routes";
 import modificarDatosRouter from '../src/api/routes/userManagement/modificarDatos.routes';
 import nominatimRouter from '../src/api/routes/userManagement/sugerencias.routes';
-import deviceRouter from '../src/api/routes/userManagement/device.routes';//<-----
+import deviceRouter from './api/routes/userManagement/device.routes';//<-----
 import cambiarContrasenaRouter from '../src/api/routes/userManagement/editarContraseña.routes';
 import cerrarSesionesRouter from '../src/api/routes/userManagement/cerrarSesiones.routes';
 import ultimoCambioRouter from '../src/api/routes/userManagement/ultimoCambio.routes';
@@ -41,7 +41,7 @@ app.use(
   cors({
     origin: [
       'https://devmasters-servineo-frontend-zk3q.vercel.app',
-      'http://localhost:8000',
+      'http://localhost:8080',
       'http://localhost:8081',
       'http://localhost:3000',
     ],
@@ -75,6 +75,7 @@ app.use('/api/controlC/obtener-password', obtenerContrasenaRouter);
 app.use('/auth', githubAuthRouter);
 app.use('/auth', discordRoutes);
 app.use('/api/controlC/cliente', clienteRouter);
+app.use('/devices', deviceRouter);
 
 
 app.use((req, res) => {

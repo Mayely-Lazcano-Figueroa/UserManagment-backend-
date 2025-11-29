@@ -41,6 +41,26 @@ export const obtenerDispositivos = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Error interno del servidor' });
   }
 };
+// Eliminar todas las sesiones de un usuario excepto la actual
+export const eliminarTodasExceptoActual = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const { except } = req.body; // ID del dispositivo que no se elimina
+
+    if (!userId) return res.status(400).json({ message: "Falta userId" });
+
+    await Device.deleteMany({
+      userId,
+      _id: { $ne: except }, // elimina todos excepto el actual
+    });
+
+    res.json({ message: "Todas las sesiones eliminadas excepto la actual" });
+  } catch (err) {
+    console.error('Error eliminarTodasExceptoActual:', err);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
+};
+
 
 // Eliminar dispositivo
 export const eliminarDispositivo = async (req: Request, res: Response) => {
