@@ -16,7 +16,6 @@ export async function verifyTOTPController(req: Request, res: Response) {
     return res.json(result);
 
   } catch (err: any) {
-    console.error("[DEBUG] Error en verifyTOTPController:", err.message || err);
 
     // Devuelve mismo formato de error que Google Login
     return res.status(400).json({

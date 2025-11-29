@@ -27,53 +27,42 @@ function decryptSecret(packed: string) {
 
 export async function verifyTOTPForEmail(email: string, token: string) {
   try {
-    console.log("[DEBUG] verifyTOTPForEmail iniciado con email:", email, "y token:", token);
     const mongo = await clientPromise;
     const db = mongo.db("ServineoBD");
 
     const user = await db.collection("users").findOne({ email });
-    console.log("[DEBUG] Usuario encontrado:", user);
 
     if (!user) {
-      console.log("[DEBUG] Usuario no encontrado");
       throw new Error("Usuario no encontrado");
     }
 
     if (!user.twoFactorEnabled || !user.twoFactorSecret) {
-      console.log("[DEBUG] Usuario no tiene 2FA activo");
       throw new Error("El usuario no tiene 2FA activo");
     }
 
     let secretPlain;
     try {
       secretPlain = decryptSecret(user.twoFactorSecret);
-      console.log("[DEBUG] Secret desencriptado:", secretPlain);
     } catch (err) {
-      console.error("[DEBUG] Error desencriptando secret:", err);
       throw new Error("Error al desencriptar el secreto 2FA");
     }
 
     const isValid = authenticator.check(token, secretPlain);
-    console.log("[DEBUG] Código válido?:", isValid);
 
     if (!isValid) {
       await db.collection("users").updateOne({ _id: user._id }, { $inc: { failedAttempts: 1 } });
-      console.log("[DEBUG] Código incorrecto, incrementando failedAttempts");
       throw new Error("Código incorrecto");
     }
 
     const now = new Date();
     await db.collection("users").updateOne({ _id: user._id }, { $set: { failedAttempts: 0, twoFactorVerifiedAt: now } });
-    console.log("[DEBUG] Código correcto, reset failedAttempts y guardada twoFactorVerifiedAt:", now);
 
     const jwtToken = jwt.sign(
       { id: user._id.toString(), email: user.email, name: user.name },
       JWT_SECRET,
       { expiresIn: TOKEN_EXPIRES }
     );
-    console.log("[DEBUG] JWT generado:", jwtToken);
 
-    // ✅ Devuelve mismo formato que login con Google
     return {
       status: "exists",
       firstTime: false,
@@ -87,7 +76,6 @@ export async function verifyTOTPForEmail(email: string, token: string) {
     };
 
   } catch (err: any) {
-    console.error("❌ Error en verifyTOTPForEmail:", err.message || err);
     // Aquí lanzamos el error para que el controller lo maneje y devuelva status 400 o 500
     throw err;
   }

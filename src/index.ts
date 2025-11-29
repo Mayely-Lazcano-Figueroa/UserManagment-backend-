@@ -12,6 +12,7 @@ import nominatimRouter from './modules/controlC/HU5/sugerencias/routes';
 import cambiarContrasenaRouter from './modules/controlC/HU8/editarContraseña/routes';
 import sesion2faRouter from "./modules/controlC/security/sesion2fa/routes";
 import ingresar2faRouter from './modules/controlC/security/ingresar2fa/routes';
+import codigos2faRouter from './modules/controlC/security/codigos2fa/routes';
 
 ///////////////////
 import obtenerContrasenaRouter from './modules/controlC/HU8/obtener/routes';
@@ -34,6 +35,7 @@ app.use('/api/controlC/sugerencias', nominatimRouter);
 app.use('/api/controlC/cambiar-contrasena', cambiarContrasenaRouter);
 app.use("/api/controlC/sesion2fa", sesion2faRouter);
 app.use('/api/controlC/2fa-ingresar', ingresar2faRouter);
+app.use('/api/controlC/codigos2fa', codigos2faRouter);
 
 ////////////////////
 app.use('/api/controlC/obtener-password', obtenerContrasenaRouter);
