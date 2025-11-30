@@ -1,27 +1,25 @@
 import { Request, Response } from 'express';
-//./device.model
 import Device from '../../../models/usermanagement/device.model';
- 
+
 // Registrar un dispositivo
 export const registrarDispositivo = async (req: Request, res: Response) => {
   try {
     const { userId, os, type } = req.body;
+    const userAgent = req.headers['user-agent'] || 'unknown';
 
     if (!userId || !os || !type) {
       return res.status(400).json({ message: 'Faltan datos requeridos' });
     }
 
-    // Si el usuario ya tiene este tipo de dispositivo, actualizar lastLogin
-    let dispositivo = await Device.findOne({ userId, os, type });
+    // Crear siempre un nuevo registro
+    const dispositivo = new Device({
+      userId,
+      os,
+      type,
+      userAgent,
+      lastLogin: new Date(),
+    });
 
-    if (dispositivo) {
-      dispositivo.lastLogin = new Date();
-      await dispositivo.save();
-      return res.json({ message: 'Dispositivo actualizado', dispositivo });
-    }
-
-    // Si no existe, crear nuevo
-    dispositivo = new Device({ userId, os, type });
     await dispositivo.save();
     res.json({ message: 'Dispositivo registrado', dispositivo });
   } catch (err) {
@@ -34,24 +32,25 @@ export const registrarDispositivo = async (req: Request, res: Response) => {
 export const obtenerDispositivos = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    const dispositivos = await Device.find({ userId });
+    const dispositivos = await Device.find({ userId }).sort({ lastLogin: -1 }); // orden descendente
     res.json(dispositivos);
   } catch (err) {
     console.error('Error obtenerDispositivos:', err);
     res.status(500).json({ message: 'Error interno del servidor' });
   }
 };
-// Eliminar todas las sesiones de un usuario excepto la actual
+
+// Eliminar todas las sesiones excepto la actual
 export const eliminarTodasExceptoActual = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    const { except } = req.body; // ID del dispositivo que no se elimina
+    const { except } = req.body;
 
     if (!userId) return res.status(400).json({ message: "Falta userId" });
 
     await Device.deleteMany({
       userId,
-      _id: { $ne: except }, // elimina todos excepto el actual
+      _id: { $ne: except },
     });
 
     res.json({ message: "Todas las sesiones eliminadas excepto la actual" });
@@ -61,8 +60,7 @@ export const eliminarTodasExceptoActual = async (req: Request, res: Response) =>
   }
 };
 
-
-// Eliminar dispositivo
+// Eliminar un dispositivo específico
 export const eliminarDispositivo = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;

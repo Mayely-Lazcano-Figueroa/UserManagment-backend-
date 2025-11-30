@@ -1,11 +1,5 @@
 import { Router } from 'express';
-import {
-  registrarDispositivo,
-  obtenerDispositivos,
-  eliminarDispositivo,
-  ///device.controller
-} from '../../controllers/userManagement/device.controller';
-import { eliminarTodasExceptoActual } from '../../controllers/userManagement/device.controller';
+import { registrarDispositivo, obtenerDispositivos, eliminarDispositivo, eliminarTodasExceptoActual } from '../../controllers/userManagement/device.controller';
 
 const router = Router();
 

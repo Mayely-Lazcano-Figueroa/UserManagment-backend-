@@ -4,7 +4,7 @@ export interface IDevice extends Document {
   userId: string;
   os: string;
   type: string;
-  lastLogin: Date;
+  lastLogin: Date; 
 }
 
 const DeviceSchema = new Schema<IDevice>({

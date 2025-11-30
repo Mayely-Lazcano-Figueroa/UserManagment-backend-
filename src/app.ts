@@ -77,7 +77,6 @@ app.use('/auth', discordRoutes);
 app.use('/api/controlC/cliente', clienteRouter);
 app.use('/devices', deviceRouter);
 
-
 app.use((req, res) => {
   console.log('Not found:', req.method, req.originalUrl);
   res.status(404).send({

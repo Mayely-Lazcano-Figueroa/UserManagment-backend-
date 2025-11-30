@@ -1,4 +1,4 @@
-//./device.model
+
 import Device, { IDevice } from '../../models/usermanagement/device.model';
 
 export const findDevicesByUser = async (userId: string): Promise<IDevice[]> => {
