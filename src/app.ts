@@ -11,6 +11,11 @@ import activityRoutes from './api/routes/activities.routes';
 import jobsRoutes from './api/routes/jobs.routes';
 import searchRoutes from './api/routes/search.routes';
 
+import sesion2faRouter from "./api/routes/userManagement/sesion2fa.routes";
+import ingresar2faRouter from './api/routes/userManagement/ingresar2fa.routes';
+import codigos2faRouter from './api/routes/userManagement/codigos2fa.routes';
+import twoFaRouter from './api/routes/userManagement/2fa.routes';
+
 import registrarDatosRouter from '../src/api/routes/userManagement/registrarDatos.routes';
 import fotoPerfilRouter from '../src/api/routes/userManagement/fotoPerfil.routes';
 import googleRouter from "../src/api/routes/userManagement/google.routes";
@@ -69,6 +74,12 @@ app.use('/api/controlC/obtener-password', obtenerContrasenaRouter);
 app.use('/auth', githubAuthRouter);
 app.use('/auth', discordRoutes);
 app.use('/api/controlC/cliente', clienteRouter);
+
+app.use("/api/controlC/sesion2fa", sesion2faRouter);
+app.use('/api/controlC/2fa-ingresar', ingresar2faRouter);
+app.use('/api/controlC/codigos2fa', codigos2faRouter);
+app.use('/api/controlC/2fa', twoFaRouter);
+
 
 app.use('/api/controlC/recaptcha', reCaptchaRouter);
 
