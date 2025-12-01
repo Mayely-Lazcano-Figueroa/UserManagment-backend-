@@ -18,7 +18,7 @@ export const registrarTelefono = async (req: Request, res: Response) => {
   }
 
   try {
-    // ✅ Verificar si el teléfono ya existe
+    // Verificar si el teléfono ya existe
     const telefonoExiste = await verificarTelefonoDuplicado(telefono, user.email);
     
     if (telefonoExiste) {

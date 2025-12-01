@@ -20,7 +20,7 @@ export async function guardarTelefonoUsuario(
   console.log(`✅ Teléfono guardado para ${email}: ${telefono}`);
 }
 
-// ✅ NUEVA FUNCIÓN: Verificar si el teléfono ya existe
+// Verificar si el teléfono ya existe
 export async function verificarTelefonoDuplicado(
   telefono: string,
   emailActual: string
@@ -30,7 +30,7 @@ export async function verificarTelefonoDuplicado(
 
   const usuarioConTelefono = await db.collection("users").findOne({
     telefono: telefono,
-    email: { $ne: emailActual } // Excluir el usuario actual
+    email: { $ne: emailActual } 
   });
 
   return usuarioConTelefono !== null;
