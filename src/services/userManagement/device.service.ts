@@ -1,4 +1,3 @@
-
 import Device, { IDevice } from '../../models/divice.model';
 
 export const findDevicesByUser = async (userId: string): Promise<IDevice[]> => {

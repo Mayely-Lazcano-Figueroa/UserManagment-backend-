@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose'; 
 
 export interface IDevice extends Document {
   userId: string;

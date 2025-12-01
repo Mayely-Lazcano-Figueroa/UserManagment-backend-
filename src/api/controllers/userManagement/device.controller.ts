@@ -1,7 +1,7 @@
-import { Request, Response } from 'express';
+import { Request, Response } from 'express'; 
 import Device from '../../../models/divice.model';
 
-// Registrar o actualizar un dispositivo
+// device.controller.ts - Ya está bien, solo verifica que funcione
 export const registrarDispositivo = async (req: Request, res: Response) => {
   try {
     const { userId, os, type } = req.body;
@@ -11,12 +11,14 @@ export const registrarDispositivo = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Faltan datos requeridos" });
     }
 
-    // Buscar dispositivo por userId y userAgent (más confiable)
+    // Buscar por userId Y userAgent (clave para evitar duplicados)
     let dispositivo = await Device.findOne({ userId, userAgent });
 
     if (dispositivo) {
       // Ya existe → solo actualizar lastLogin
       dispositivo.lastLogin = new Date();
+      dispositivo.os = os; // Actualizar también el OS por si cambió
+      dispositivo.type = type;
       await dispositivo.save();
 
       return res.json({
@@ -25,7 +27,7 @@ export const registrarDispositivo = async (req: Request, res: Response) => {
       });
     }
 
-    // Crear uno nuevo
+    // Crear uno nuevo solo si no existe
     dispositivo = new Device({
       userId,
       os,
