@@ -33,6 +33,7 @@ import clienteRouter from '../src/api/routes/userManagement/cliente.routes';
 import obtenerContrasenaRouter from '../src/api/routes/userManagement/obtener.routes';
 
 import reCaptchaRouter from './api/routes/userManagement/reCaptcha.routes';
+import telefonoRoutes from "./api/routes/userManagement/telefono.routes";
 
 const app = express();
 
@@ -82,6 +83,7 @@ app.use('/api/controlC/2fa', twoFaRouter);
 
 
 app.use('/api/controlC/recaptcha', reCaptchaRouter);
+app.use("/api/controlC/telefono", telefonoRoutes);
 
 export const registerRoutes = (app: any) => {
   app.use('/devices', deviceRouter);
